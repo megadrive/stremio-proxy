@@ -5,19 +5,19 @@ const ManifestTypesSchema = z.array(z.enum(["movie", "series", "tv"]));
 
 const FullManifestResourceSchema = z.object({
   name: z.string(),
-  types: ManifestTypesSchema,
+  types: ManifestTypesSchema.or(z.array(z.string())),
   idPrefixes: z.array(z.string()),
 });
 
 const ManifestCatalogSchema = z.object({
   id: z.string(),
   name: z.string(),
-  type: ManifestTypesSchema,
-  gentres: z.array(z.string()).optional(),
+  type: z.any(),
+  gentres: z.any(),
   extra: z
     .array(
       z.object({
-        name: z.enum(["search", "genre", "skip"]),
+        name: z.array(z.string()),
         isRequired: z.boolean().optional(),
         options: z.array(z.string()).optional(),
         optionsLimit: z.number().optional(),
@@ -31,9 +31,9 @@ export const ManifestSchema = z.object({
   name: z.string(),
   description: z.string(),
   version: z.string(),
-  resources: z.array(FullManifestResourceSchema),
-  types: z.array(ManifestTypesSchema),
-  catalogs: z.array(ManifestCatalogSchema),
+  resources: z.any(),
+  types: z.any(),
+  catalogs: z.any(),
   // addonCatalogs: z.array(ManifestCatalogSchema).optional(),
   // idPrefixes: z.array(z.string()).optional(),
   // background: z.string().optional(),
