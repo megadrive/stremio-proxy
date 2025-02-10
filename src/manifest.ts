@@ -34,22 +34,22 @@ export const ManifestSchema = z.object({
   resources: z.array(FullManifestResourceSchema),
   types: z.array(ManifestTypesSchema),
   catalogs: z.array(ManifestCatalogSchema),
-  addonCatalogs: z.array(ManifestCatalogSchema).optional(),
-  idPrefixes: z.array(z.string()).optional(),
-  background: z.string().optional(),
-  icon: z.string().optional(),
-  logo: z.string().optional(),
-  contactEmail: z.string().optional(),
-  behaviorHints: z
-    .array(
-      z.object({
-        adult: z.boolean().optional(),
-        p2p: z.boolean().optional(),
-        configurable: z.boolean().optional(),
-        configurationRequired: z.boolean().optional(),
-      })
-    )
-    .optional(),
+  // addonCatalogs: z.array(ManifestCatalogSchema).optional(),
+  // idPrefixes: z.array(z.string()).optional(),
+  // background: z.string().optional(),
+  // icon: z.string().optional(),
+  // logo: z.string().optional(),
+  // contactEmail: z.string().optional(),
+  // behaviorHints: z
+  //   .array(
+  //     z.object({
+  //       adult: z.boolean().optional(),
+  //       p2p: z.boolean().optional(),
+  //       configurable: z.boolean().optional(),
+  //       configurationRequired: z.boolean().optional(),
+  //     })
+  //   )
+  //   .optional(),
 });
 export type Manifest = z.infer<typeof ManifestSchema>;
 
