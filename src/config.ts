@@ -12,6 +12,16 @@ export const config = {
     return Buffer.from(JSON.stringify(config)).toString("base64");
   },
   decode: (encoded: string) => {
-    return schema.parse(JSON.parse(Buffer.from(encoded, "base64").toString()));
+    try {
+      return schema.parse(
+        JSON.parse(Buffer.from(encoded, "base64").toString())
+      );
+    } catch (error) {
+      console.error(error);
+      return {
+        manifestUrl: "",
+        rules: [],
+      };
+    }
   },
 };

@@ -30,6 +30,9 @@ app.get("/:config/manifest.json", async (req, res) => {
   try {
     // grab the manifest from the config
     const { manifestUrl } = providedConfig;
+    if (manifestUrl === "") {
+      throw new Error("Manifest URL is empty, likely a config parse error.");
+    }
 
     const fetchedManifest = await fetch(manifestUrl);
     if (!fetchedManifest.ok) {
