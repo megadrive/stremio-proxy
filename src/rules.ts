@@ -1,5 +1,5 @@
-import type { Manifest } from "stremio-addon-sdk";
 import { Config } from "./config";
+import { Manifest } from "./manifest";
 
 export const rules = {
   // Default rules below
@@ -47,7 +47,7 @@ export const applyRules = (manifest: Manifest, config: Config) => {
     }
 
     console.info(`Applying rule ${rule}`);
-    manifest = rules[ruleName](manifest, args);
+    manifest = rules[ruleName as keyof typeof rules](manifest, args);
   }
 
   return manifest;

@@ -3,6 +3,7 @@ import cors from "cors";
 import { env } from "./env";
 import { config } from "./config";
 import { applyRules } from "./rules";
+import { ManifestSchema } from "./manifest";
 
 const app = express();
 app.use(cors());
@@ -36,9 +37,10 @@ app.get("/:config/manifest.json", async (req, res) => {
       return;
     }
     const fetchedManifestJson = await fetchedManifest.json();
+    const validatedManifest = ManifestSchema.parse(fetchedManifestJson);
 
     // depending on the rules in the config, we may need to modify the manifest
-    const manipulatedManifest = applyRules(fetchedManifestJson, providedConfig);
+    const manipulatedManifest = applyRules(validatedManifest, providedConfig);
 
     res.send(manipulatedManifest);
   } catch (error) {
@@ -62,7 +64,6 @@ app.all("/:config/*", (req, res) => {
   console.info(`Redirecting to ${redirectUrl.toString()}`);
 
   // redirect to the endpoint without the config
-  // res.redirect(redirectUrl.toString());
   res.redirect(redirectUrl.toString());
   return;
 });
