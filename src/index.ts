@@ -21,10 +21,10 @@ app.all("/:config?/configure", (req, res) => {
 });
 
 app.get("/:config/manifest.json", async (req, res) => {
-  const providedConfig = config.decode(req.params.config);
-  console.info({ providedConfig });
-
   try {
+    const providedConfig = config.decode(req.params.config);
+    console.info({ providedConfig });
+
     // grab the manifest from the config
     const { manifestUrl } = providedConfig;
     if (manifestUrl === "") {
