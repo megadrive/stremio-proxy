@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Configure proxy</h1>
+
+  <form id="rulesForm">
+    <div>
+      <label for="manifestUrl">Manifest URL</label>
+      <input type="text" id="manifestUrl" name="manifestUrl">
+    </div>
+
+    <div>
+      <label for="rules">Rules</label>
+      <select id="rules" name="rules" multiple>
+        <option value="no_catalogs">No catalogs</option>
+      </select>
+    </div>
+
+    <div>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+
+  <script>
+    const form = document.getElementById("rulesForm");
+    if (!form) {
+      throw new Error("Could not find form");
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const manifestUrl = document.getElementById("manifestUrl")?.value;
+      const rules = Array.from(document.getElementById("rules")?.selectedOptions).map((option) => option.value);
+
+      const encodedConfig = btoa(JSON.stringify({ manifestUrl, rules }));
+      window.location.href = `${location.origin}/${encodedConfig}/manifest.json`;
+    });
+  </script>
+</body>
+
+</html>

@@ -4,7 +4,7 @@ const schema = z.object({
   manifestUrl: z.string(),
   rules: z.array(z.enum(["no_catalogs"])),
 });
-type Config = z.infer<typeof schema>;
+export type Config = z.infer<typeof schema>;
 
 // base64
 export const config = {

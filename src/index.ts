@@ -3,6 +3,7 @@ import cors from "cors";
 import { cleanEnv, num } from "envalid";
 import { manifest } from "./manifest";
 import { config } from "./config";
+import { applyRules } from "./rules";
 
 const env = cleanEnv(process.env, {
   PORT: num({ default: 3000 }),
@@ -11,9 +12,11 @@ const env = cleanEnv(process.env, {
 const app = express();
 app.use(cors());
 
+app.use(express.static("static"));
+
 app.get("/:config/manifest.json", async (req, res) => {
-  const proxiedManifest = Object.assign({}, manifest);
   const providedConfig = config.decode(req.params.config);
+  console.info({ providedConfig });
 
   try {
     // grab the manifest from the config
@@ -24,20 +27,16 @@ app.get("/:config/manifest.json", async (req, res) => {
       res.status(500).send("Failed to fetch manifest");
       return;
     }
+    const fetchedManifestJson = await fetchedManifest.json();
 
     // depending on the rules in the config, we may need to modify the manifest
-    const { rules } = providedConfig;
-    for (const rule of rules) {
-      switch (rule) {
-        case "no_catalogs":
-          proxiedManifest.catalogs = [];
-          break;
-      }
-    }
+    const manipulatedManifest = applyRules(fetchedManifestJson, providedConfig);
+    manipulatedManifest.id += "-proxied";
 
-    res.send(proxiedManifest);
+    res.send(manipulatedManifest);
     return;
   } catch (error) {
+    console.error(error);
     res.status(500).send("Invalid config");
   }
 
@@ -45,8 +44,21 @@ app.get("/:config/manifest.json", async (req, res) => {
 });
 
 app.all("/:config/*", (req, res) => {
-  // TODO: implement proxying
-  res.send("Not implemented");
+  const providedConfig = config.decode(req.params.config);
+  console.info({ providedConfig });
+
+  console.info(req.path);
+
+  const redirectPath = req.path.split(/\/+/).filter(Boolean).slice(1).join("/");
+  const redirectBase = new URL(providedConfig.manifestUrl).origin;
+  const redirectUrl = new URL(redirectPath, redirectBase);
+
+  console.info(`Redirecting to ${redirectUrl.toString()}`);
+
+  // redirect to the endpoint without the config
+  // res.redirect(redirectUrl.toString());
+  res.redirect(redirectUrl.toString());
+  return;
 });
 
 app.listen(env.PORT, () => {
