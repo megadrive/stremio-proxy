@@ -1,12 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { cleanEnv, num } from "envalid";
+import { env } from "./env";
 import { config } from "./config";
 import { applyRules } from "./rules";
-
-const env = cleanEnv(process.env, {
-  PORT: num({ default: 3000 }),
-});
 
 const app = express();
 app.use(cors());
