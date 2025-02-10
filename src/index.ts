@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import { cleanEnv, num } from "envalid";
-import { manifest } from "./manifest";
 import { config } from "./config";
 import { applyRules } from "./rules";
 
@@ -13,6 +12,16 @@ const app = express();
 app.use(cors());
 
 app.use(express.static("static"));
+
+app.all("/", (req, res) => {
+  res.redirect("/configure");
+});
+
+app.all("/:config?/configure", (req, res) => {
+  res.redirect(
+    `/${req.params.config ? `${req.params.config}/` : ""}configure.html`
+  );
+});
 
 app.get("/:config/manifest.json", async (req, res) => {
   const providedConfig = config.decode(req.params.config);
@@ -31,10 +40,8 @@ app.get("/:config/manifest.json", async (req, res) => {
 
     // depending on the rules in the config, we may need to modify the manifest
     const manipulatedManifest = applyRules(fetchedManifestJson, providedConfig);
-    manipulatedManifest.id += "-proxied";
 
     res.send(manipulatedManifest);
-    return;
   } catch (error) {
     console.error(error);
     res.status(500).send("Invalid config");
